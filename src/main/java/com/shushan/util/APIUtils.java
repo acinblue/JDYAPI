@@ -28,14 +28,14 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public class APIUtils {
 	public static final String WEBSITE = "https://www.jiandaoyun.com";
-	private boolean retryIfRateLimited = true;
+	private static boolean retryIfRateLimited = true;
     private String urlGetWidgets;
     private String urlGetFormData;
     private String urlRetrieveData;
     private String urlUpdateData;
-    private String urlCreateData;
+    private static String urlCreateData;
     private String urlDeleteData;
-    private String apiKey;
+    private static String apiKey;
     
     /**
      * @param appId - 应用id
@@ -56,7 +56,7 @@ public class APIUtils {
         urlDeleteData = WEBSITE + "/api/v1/app/" + appId + "/entry/" + entryId + "/data_delete";
     }
 
-    public HttpClient getSSLHttpClient () throws Exception {
+    public static HttpClient getSSLHttpClient () throws Exception {
         SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
             //信任所有
             public boolean isTrusted(X509Certificate[] chain, String authType) throws CertificateException {
@@ -71,9 +71,9 @@ public class APIUtils {
      * 获取请求头信息
      * @return
      */
-    public Header[] getHttpHeaders () {
+    public static Header[] getHttpHeaders () {
         List<Header> headerList = new ArrayList<Header>();
-        headerList.add(new BasicHeader("Authorization", "Bearer " + this.apiKey));
+        headerList.add(new BasicHeader("Authorization", "Bearer " + apiKey));
         headerList.add(new BasicHeader("Content-Type", "application/json;charset=utf-8"));
         return headerList.toArray(new Header[headerList.size()]);
     }
@@ -85,9 +85,9 @@ public class APIUtils {
      * @param data - 请求的数据
      * @throws Exception
      */
-    public Object sendRequest (String method, String url, Map<String, Object> data) throws Exception {
-        HttpClient client = this.getSSLHttpClient();
-        Header[] headers = this.getHttpHeaders();
+    public static Object sendRequest (String method, String url, Map<String, Object> data) throws Exception {
+        HttpClient client = getSSLHttpClient();
+        Header[] headers = getHttpHeaders();
         HttpRequestBase request;
         method = method.toUpperCase();
         if ("GET".equals(method)) {
@@ -118,10 +118,10 @@ public class APIUtils {
         Map<String, Object> result = (Map<String, Object>) mapper.readValue(response.getEntity().getContent(), Object.class);
         if (statusCode >= 400) {
             // 请求错误
-            if ((Integer) result.get("code") == 8303 && this.retryIfRateLimited) {
+            if ((Integer) result.get("code") == 8303 && retryIfRateLimited) {
                 // 频率超限，5s后重试
                 Thread.sleep(5000);
-                return this.sendRequest(method, url, data);
+                return sendRequest(method, url, data);
             } else {
                 throw new RuntimeException("请求错误，Error Code: " + result.get("code") + ", Error Msg: " + result.get("msg"));
             }
@@ -150,12 +150,12 @@ public class APIUtils {
      * @param rawData - 创建数据内容
      * @return 更新后的数据
      */
-    public Map<String, Object> createData (Map<String, Object> rawData) {
+    public  Map<String, Object> createData (Map<String, Object> rawData) {
         Map<String, Object> data = null;
         try {
             Map<String, Object> requestData = new HashMap<String, Object>();
             requestData.put("data", rawData);
-            Map<String, Object> result = (Map<String, Object>) this.sendRequest("POST",urlCreateData, requestData);
+            Map<String, Object> result = (Map<String, Object>)sendRequest("POST",urlCreateData, requestData);
             data = (Map<String, Object>) result.get("data");
         } catch (Exception e) {
             e.printStackTrace();

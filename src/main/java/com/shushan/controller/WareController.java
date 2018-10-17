@@ -10,7 +10,9 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.shushan.entity.Warehouse;
 import com.shushan.service.WareService;
@@ -30,11 +32,12 @@ public class WareController {
 	private String apiKey = "4L9Gfjl6idxcfWvjGQBUCun0K16WZOfF";
 	private APIUtils api;
 	
-	@RequestMapping(value= {"ware_add"}, method= {org.springframework.web.bind.annotation.RequestMethod.POST}, produces = { "text/plain;charset=UTF-8" })
-	public void wareAdd(HttpServletResponse response) {
-		String message = wareService.add(warehouse,warehouseno,warehousetext);
+	@RequestMapping(value= {"ware_add"}, method= {org.springframework.web.bind.annotation.RequestMethod.POST})
+	public void wareAdd(@RequestBody Warehouse warehouse,HttpServletResponse response) {
+		System.out.println("warehouse:"+warehouse.getWarehouse()+"    warehouseno:"+warehouse.getWarehouseno()+"    warehousetext:"+warehouse.getWarehousetext());
+		String message = wareService.add(warehouse.getWarehouse(),warehouse.getWarehouseno(),warehouse.getWarehousetext());
 		try {
-			Map<String, Object> resultMap = wareAddToJDY(warehouse, warehouseno, warehousetext);
+			Map<String, Object> resultMap = wareAddToJDY(warehouse.getWarehouse(),warehouse.getWarehouseno(),warehouse.getWarehousetext());
 			response.getWriter().write(resultMap.toString());
 		} catch (Exception e) {
 			// TODO: handle exception

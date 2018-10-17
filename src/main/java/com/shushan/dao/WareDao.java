@@ -14,7 +14,7 @@ public class WareDao {
 
 		public boolean add(String warehouse, int warehouseno, String warehousetext) {
 			Connection conn = DBConn.getConnection();
-			String sql = "insert into `warehouse`(warehouse, warehouseno, warehousetext) values (?,?,?)";
+			String sql = "insert into `table_warehouse`(warehouse, warehouseno, warehousetext) values (?,?,?)";
 			PreparedStatement psmt = null;
 			int result = 0;
 			try {
@@ -26,6 +26,8 @@ public class WareDao {
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}finally {
+				DBConn.close(conn, psmt, null);
 			}
 			return (result>0)?true:false;
 		}
