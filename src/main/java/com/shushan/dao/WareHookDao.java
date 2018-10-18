@@ -17,7 +17,7 @@ public class WareHookDao {
 
 	public void add(JSONObject data) {
 		// TODO Auto-generated method stub
-		String sql = "insert into `table_warehouse` value (?,?,?,?)";
+		String sql = "insert into `table_warehouse` (id_jdy,warehouse, warehouseno, warehousetext) value (?,?,?,?)";
 		Connection conn = DBConn.getConnection();
 		PreparedStatement psmt = null;
 		try {
@@ -38,7 +38,7 @@ public class WareHookDao {
 
 	public void update(JSONObject data) {
 		// TODO Auto-generated method stub
-		String sql = "update `table_warehouse` set warehouse = ?, warehouseno = ?, warehousetext = ? where id = ?";
+		String sql = "update `table_warehouse` set warehouse = ?, warehouseno = ?, warehousetext = ? where id_jdy = ?";
 		Connection conn = DBConn.getConnection();
 		PreparedStatement psmt = null;
 		try {
@@ -58,7 +58,7 @@ public class WareHookDao {
 
 	public void delete(JSONObject data) {
 		// TODO Auto-generated method stub
-		String sql = "delete from `table_warehouse` where id = ?";
+		String sql = "delete from `table_warehouse` where id_jdy = ?";
 		Connection conn = DBConn.getConnection();
 		PreparedStatement psmt = null;
 		try {

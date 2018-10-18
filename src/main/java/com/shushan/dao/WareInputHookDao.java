@@ -14,7 +14,7 @@ import com.shushan.util.DBConn;
 public class WareInputHookDao {
 
 	public void add(JSONObject data) {
-		String sql = "insert into `table_input` values(?, ?, ?, ?, ?, ?, ?)";
+		String sql = "insert into `table_input` (id_jdy, warehouse, warehouseno, warehousing_in_time, warehousing_in_detail, creator, updater) values(?, ?, ?, ?, ?, ?, ?)";
 		Connection conn = DBConn.getConnection();
 		PreparedStatement psmt = null;
 		try {
@@ -36,7 +36,7 @@ public class WareInputHookDao {
 	}
 
 	public void update(JSONObject data) {
-		String sql = "update `table_input` set warehouse=?, warehouseno=?, warehousing_in_time=?, warehousing_in_detail=?, creator=?, updater=? where id=?";
+		String sql = "update `table_input` set warehouse=?, warehouseno=?, warehousing_in_time=?, warehousing_in_detail=?, creator=?, updater=? where id_jdy=?";
 		Connection conn = DBConn.getConnection();
 		PreparedStatement psmt = null;
 		try {
@@ -61,7 +61,7 @@ public class WareInputHookDao {
 	}
 
 	public void delete(JSONObject data) {
-		String sql = "delete from `table_input` where id=?";
+		String sql = "delete from `table_input` where id_jdy=?";
 		Connection conn = DBConn.getConnection();
 		PreparedStatement psmt = null;
 		try {

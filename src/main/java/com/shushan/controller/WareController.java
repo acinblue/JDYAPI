@@ -35,7 +35,6 @@ public class WareController {
 	
 	@RequestMapping(value= {"ware_add"}, method= {org.springframework.web.bind.annotation.RequestMethod.POST})
 	public void wareAdd(@RequestBody Warehouse warehouse,HttpServletResponse response) {
-		System.out.println("warehouse:"+warehouse.getWarehouse()+"    warehouseno:"+warehouse.getWarehouseno()+"    warehousetext:"+warehouse.getWarehousetext());
 		String message = wareService.add(warehouse.getWarehouse(),warehouse.getWarehouseno(),warehouse.getWarehousetext());
 		try {
 			Map<String, Object> resultMap = wareAddToJDY(warehouse.getWarehouse(),warehouse.getWarehouseno(),warehouse.getWarehousetext());
@@ -74,41 +73,6 @@ public class WareController {
 		String id_JDY = (String) createData.get("_id");
 		wareService.updateIDJDY(warehouseJDY, id_JDY);
 		return createData;
-	}
-	/**
-	 * 获取简道云数据的ID
-	 * @param warehouseJDY
-	 * @param warehousenoJDY
-	 * @return
-	 */
-	public String getJDYID(String warehouseJDY, String warehousetextJDY) {
-		List<Map<String, Object>> conList = new ArrayList<Map<String,Object>>();
-		//设置查询条件
-		conList.add(new HashMap<String,Object>(){
-			{
-				put("field", "warehouse");
-				put("type", "text");
-				put("method", "eq");
-				put("value", warehouseJDY);
-			}
-		});
-		conList.add(new HashMap<String,Object>(){
-			{
-				put("field", "warehousetext");
-				put("type", "text");
-				put("method", "eq");
-				put("value", warehousetextJDY);
-			}
-		});
-		//设置过滤器
-		Map<String, Object> filter = new HashMap<String, Object>(){
-            {
-                put("rel", "and");
-                put("cond", conList);
-            }
-        };
-        List<Map<String, Object>> result = api.getFormData(10, new String[] {"_id"}, filter, null);
-		return (String) result.get(0).get("_id");
 	}
 	
 	public WareService getWareService() {
