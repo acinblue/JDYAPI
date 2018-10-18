@@ -18,6 +18,3 @@ function submit() {
 	});
 }
 
-function lose() {
-	alert($("#warehouse").val());
-}

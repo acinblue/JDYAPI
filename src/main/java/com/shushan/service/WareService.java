@@ -13,5 +13,9 @@ public class WareService {
 		
 		return wareDao.add(warehouse, warehouseno, warehousetext)?"成功":"失败";
 	}
+	public void updateIDJDY(String warehouse, String idJDY) {
+		wareDao.updateIDJDY(warehouse, idJDY);
+		
+	}
 
 }

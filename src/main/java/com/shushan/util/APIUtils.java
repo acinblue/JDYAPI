@@ -55,7 +55,6 @@ public class APIUtils {
         urlCreateData = WEBSITE + "/api/v1/app/" + appId + "/entry/" + entryId + "/data_create";
         urlDeleteData = WEBSITE + "/api/v1/app/" + appId + "/entry/" + entryId + "/data_delete";
     }
-
     public static HttpClient getSSLHttpClient () throws Exception {
         SSLContext sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
             //信任所有
@@ -130,20 +129,6 @@ public class APIUtils {
             return result;
         }
     }
-    /**
-     * 获取表单字段
-     * @return 表单字段
-     */
-    public List<Map<String, Object>> getFormWidgets () {
-        List<Map<String, Object>> widgets = null;
-        try {
-            Map<String, Object> result = (Map<String, Object>) this.sendRequest("POST", urlGetWidgets, new HashMap<String, Object>());
-            widgets = (List<Map<String, Object>>) result.get("widgets");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return widgets;
-    }
 
     /**
      * 创建单条数据
@@ -162,5 +147,123 @@ public class APIUtils {
         }
         return  data;
     }
+    /**
+     * 获取表单字段
+     * @return 表单字段
+     */
+    public List<Map<String, Object>> getFormWidgets () {
+        List<Map<String, Object>> widgets = null;
+        try {
+            Map<String, Object> result = (Map<String, Object>) this.sendRequest("POST", urlGetWidgets, new HashMap<String, Object>());
+            widgets = (List<Map<String, Object>>) result.get("widgets");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return widgets;
+    }
 
+    /**
+     * 按条件获取表单数据
+     * @param limit - 数据条数
+     * @param fields - 显示的字段
+     * @param filter - 过滤条件
+     * @param dataId - 上次取数的最后一个数据id
+     * @return - 返回的数据
+     */
+    public List<Map<String, Object>> getFormData (final int limit, final String[] fields, final Map<String, Object> filter, String dataId) {
+        List<Map<String, Object>> data = null;
+        try {
+            // 构造请求数据
+            Map<String, Object> requestData = new HashMap<String, Object>() {
+                {
+                    put("limit", limit);
+                    put("fields", fields);
+                    put("filter", filter);
+                }
+            };
+            if (dataId != null) {
+                requestData.put("data_id", dataId);
+            }
+            Map<String, Object> result = (Map<String, Object>) this.sendRequest("POST", urlGetFormData, requestData);
+            data = (List<Map<String, Object>>) result.get("data");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    /**
+     * 按条件获取全部表单数据
+     * @return 表单数据
+     */
+    public List<Map<String, Object>> getAllFormData (String[] fields, Map<String, Object> filter) {
+        List<Map<String, Object>> dataList = new ArrayList<Map<String, Object>>();
+        String offset = null;
+        do {
+            List<Map<String, Object>> data = this.getFormData(100, fields, filter, offset);
+            // 获取返回的数据
+            if (data == null || data.isEmpty()) {
+                // 已经获取全部的数据
+                offset = null;
+            } else {
+                // 获取最后一条数据的id
+                offset = (String) data.get(data.size() - 1).get("_id");
+                dataList.addAll(data);
+            }
+        } while (offset != null);
+        return dataList;
+    }
+
+    /**
+     * 搜索单条数据
+     * @param dataId - 要查询的数据id
+     * @return 表单数据
+     */
+    public Map<String, Object> retrieveData (String dataId) {
+        Map<String, Object> data = null;
+        try {
+            Map<String, Object> requestData = new HashMap<String, Object>();
+            requestData.put("data_id", dataId);
+            Map<String, Object> result = (Map<String, Object>) this.sendRequest("POST", urlRetrieveData, requestData);
+            data = (Map<String, Object>) result.get("data");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+
+    /**
+     * 更新单条数据
+     * @return 更新结果
+     */
+    public Map<String, Object> updateData (String dataId, Map<String, Object> update) {
+        Map<String, Object> data = null;
+        try {
+            Map<String, Object> requestData = new HashMap<String, Object>();
+            requestData.put("data_id", dataId);
+            requestData.put("data", update);
+            Map<String, Object> result = (Map<String, Object>) this.sendRequest("POST", urlUpdateData, requestData);
+            data = (Map<String, Object>) result.get("data");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return data;
+    }
+
+    /**
+     * 删除单条数据
+     * @return 删除结果
+     */
+    public Map<String, String> deleteData (String dataId) {
+        Map<String, String> result = null;
+        try {
+            Map<String, Object> requestData = new HashMap<String, Object>();
+            requestData.put("data_id", dataId);
+            result = (Map<String, String>) this.sendRequest("POST", urlDeleteData, requestData);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 }

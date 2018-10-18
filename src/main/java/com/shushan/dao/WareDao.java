@@ -31,4 +31,21 @@ public class WareDao {
 			}
 			return (result>0)?true:false;
 		}
+
+		public void updateIDJDY(String warehouse, String idJDY) {
+			Connection connection = DBConn.getConnection();
+			String sql = "update `table_warehouse` set id_jdy=? where warehouse=?";
+			PreparedStatement psmt = null;
+			try {
+				psmt = connection.prepareStatement(sql);
+				psmt.setString(1, idJDY);
+				psmt.setString(2, warehouse);
+				psmt.executeUpdate();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				DBConn.close(connection, psmt, null);
+			}
+		}
 }
